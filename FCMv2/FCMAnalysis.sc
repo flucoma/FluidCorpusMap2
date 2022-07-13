@@ -15,7 +15,7 @@ FCMFeatureExtractor {
 		shapeFeatures = [\spectral_centroid,
 		\spectral_spread, \spectral_skewness,
 		\specttral_kurtosis, \spectral_rolloff,
-		\spectral_flatness, \spectral_crest, \spectral_rolloff
+		\spectral_flatness, \spectral_crest
 		];
 
 		vectorFtr = (
@@ -53,7 +53,7 @@ FCMFeatureExtractor {
 		);
 		chain = FluidBufStats.kr(
 			ftrBuf, 0, -1, 0, -1, statsBuf,
-			settings.numDifs, trig:Done.kr(chain)
+			numDerivs:settings.numDifs, trig:Done.kr(chain)
 		);
 		chain = FluidBufFlatten.kr(
 			statsBuf,destination:dest, trig:Done.kr(chain)
@@ -131,7 +131,6 @@ FCMFeatureExtractor {
 		if (this.computeShape){
 			chain = FluidBufSpectralShape.kr(
 				src, start, nFrames, 0, -1, shapeBuf,
-				settings.numDims, trig:Done.kr(chain),
 				windowSize:settings.windowSize,
 				hopSize:settings.hopSize,
 				fftSize:settings.fftSize

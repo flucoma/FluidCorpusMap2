@@ -54,7 +54,7 @@ FCMIndex{
 	nearest{|point, action|
 		var tmpbuf = Buffer.loadCollection(
 			map.server, point, 1, {|b|
-				tree.kNearest(b,{|result|
+				tree.kNearest(b, 1, {|result|
 					action.value(result.asInteger);
 				});
 		});
