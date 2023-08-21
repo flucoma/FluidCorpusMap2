@@ -128,7 +128,7 @@ FCM{
 
 
 	prAddFile {|path, action, segment = false|
-		Buffer.read(server, path, action:{|b|
+		Buffer.readChannel(server, path, channels:[0], action:{|b|
 			var snd = FCMSound(b, 0, b.numFrames, server, 1);
 			this.prAddSound(snd, action, segment);
 		});
