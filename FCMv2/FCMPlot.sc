@@ -7,6 +7,8 @@ FCMPlotView : UserView{
 	var <>icons;
 	var <>margin = 50;
 	var drawFuncs;
+	var <>colorFunc;
+	var <>size;
 
 
 	*new{|parent, bounds, aMap|
@@ -20,8 +22,11 @@ FCMPlotView : UserView{
 		this.resize_(5);
 		this.animate = true;
 		this.frameRate = 10;
+		this.size = settings.iconSize;
+		this.colorFunc = {|v| Color.hsv(v * 0.9, 0.7, 0.7)};
+		//this.colorFunc = {|v| Color.grey(0.3+(0.7*v))};
 		drawFuncs = [];
-		this.drawFunc = {this.draw; drawFuncs.do{|f|f.value}};
+		this.drawFunc = {this.draw; drawFuncs.do{|f|f.value(this)}};
 		this.pointColor = Color.new(0,0,1,0.7);
 		this.icons = aMap.sounds.collect{|snd| FCMSoundPlot.new(snd, this)};
 		this.refresh;
@@ -32,9 +37,8 @@ FCMPlotView : UserView{
 	}
 
 	draw{
-		var size = settings.iconSize;
 		if(map.index.notNil){
-			this.makeSpecs;
+			this.makeSpecs(size/2);
 			map.index.positions.do{|pos, i|
 				var x = plotSpecs[0].map(pos[0]).asInteger - (size / 2);
 				var y = plotSpecs[1].map(pos[1]).asInteger - (size  / 2);
@@ -46,10 +50,10 @@ FCMPlotView : UserView{
 	}
 
 
-	makeSpecs {
+	makeSpecs {|size|
 		plotSpecs = [
-			ControlSpec(margin, this.bounds.width - (2*margin)),
-			ControlSpec(margin, this.bounds.height - (2*margin))
+			ControlSpec(size, this.bounds.width - size),
+			ControlSpec(size, this.bounds.height - size)
 		];
 		//sizeSpec = ControlSpec(minPointSize, maxPointSize);
 	}
@@ -131,7 +135,7 @@ FCMSoundPlot{
 			iconStats = arr;
 			shapeVal = (arr[0] - index.iconMinima[0]) / (index.iconMaxima[0] - index.iconMinima[0]);
 			colorVal = (arr[7] - index.iconMinima[1]) / (index.iconMaxima[1] - index.iconMinima[1]);
-			color = Color.hsv(colorVal*0.9, 0.7, 0.7);
+			color = parent.colorFunc.value(colorVal);
 			originalColor = color;
 		});}.fork(AppClock)
 
